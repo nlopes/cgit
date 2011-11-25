@@ -77,9 +77,10 @@ function render_group_bar_chart(data, max, n_periods, periods, n_authors, author
         .attr("stroke", "black");
 }
 
-function render_bar_chart(data, max, authors) {
+function render_bar_chart(data, authors) {
     var w = 600, h = 480, right_padding = 200,
-    data_period = get_data_from_period(),
+    tmp = get_data_from_period(),
+    data_period = tmp[0], max = tmp[1],
     z = d3.scale.category10();
 
     var x = d3.scale.linear().domain([0, max]).range([0, w/2]);
@@ -95,7 +96,7 @@ function render_bar_chart(data, max, authors) {
         .attr("transform", "translate(10,15)");
 
     chart.selectAll("line")
-        .data(x.ticks(10))
+        .data(x.ticks(max%10))
         .enter().append("svg:line")
         .attr("x1", x)
         .attr("x2", x)
@@ -104,7 +105,7 @@ function render_bar_chart(data, max, authors) {
         .attr("stroke", "#ccc");
 
     chart.selectAll("text.rule")
-        .data(x.ticks(10))
+        .data(x.ticks(max%10))
         .enter().append("svg:text")
         .attr("x", x)
         .attr("y", 0)
@@ -149,9 +150,12 @@ function render_bar_chart(data, max, authors) {
         .attr("stroke", "#000");
 
     function get_data_from_period() {
-        var tmp = [];
-        for (var i=0; i<data.length; i++)
+        var tmp = [], max = -1;
+        for (var i=0; i<data.length; i++) {
+            if (data[i][period_idx] > max)
+                max = data[i][period_idx];
             tmp.push(data[i][period_idx]);
-        return tmp;
+        }
+        return [tmp, max];
     }
 }

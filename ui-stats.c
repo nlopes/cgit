@@ -434,7 +434,7 @@ void print_authors_graph(struct string_list *authors, int top,
     }
     htmlf("], max = %ld; ", max);
     html("render_group_bar_chart(data, max, n_periods, periods, n_authors, authors);"
-         "render_bar_chart(data, max, authors);</script>");
+         "render_bar_chart(data, authors);</script>");
 }
 
 char *cgit_validate_graph_period(char *qry_graph_period, struct cgit_period *period)
