@@ -180,6 +180,10 @@ index-info::
 	is deprecated, and will not be supported by cgit-1.0 (use root-desc
 	instead). Default value: none.
 
+js::
+	Url which specifies the folder containing the javascript required. 
+        Default value: "/js".
+
 local-time::
 	Flag which, if set to "1", makes cgit print commit and tag times in the
 	servers timezone. Default value: "0".

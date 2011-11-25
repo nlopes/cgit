@@ -150,6 +150,7 @@ struct cgit_query {
 	char *mimetype;
 	char *url;
 	char *period;
+	char *graph_period;
 	int   ofs;
 	int nohead;
 	char *sort;
@@ -168,6 +169,7 @@ struct cgit_config {
 	char *clone_url;
 	char *css;
 	char *favicon;
+	char *js;
 	char *footer;
 	char *head_include;
 	char *header;

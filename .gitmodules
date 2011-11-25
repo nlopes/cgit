@@ -1,3 +1,6 @@
 [submodule "git"]
 	url = git://git.kernel.org/pub/scm/git/git.git
 	path = git
+[submodule "d3"]
+	path = d3
+	url = git://github.com/mbostock/d3.git

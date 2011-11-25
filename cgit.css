@@ -681,7 +681,7 @@ table.hgraph th {
 }
 
 table.hgraph td {
-	vertical-align: center;
+	vertical-align: middle;
 	padding: 2px 2px;
 }
 
@@ -758,7 +758,7 @@ table.ssdiff td.lineno {
 }
 
 table.ssdiff td.hunk {
-	color: #black;
+	color: black;
 	background: #ccf;
 	border-top: solid 1px #aaa;
 	border-bottom: solid 1px #aaa;
@@ -802,3 +802,7 @@ table.blob .kwa  { color:#000000; font-weight:bold; }
 table.blob .kwb  { color:#830000; }
 table.blob .kwc  { color:#000000; font-weight:bold; }
 table.blob .kwd  { color:#010181; }
+
+#bar_period rect {
+    stroke: white;
+}

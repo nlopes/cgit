@@ -124,6 +124,8 @@ void config_cb(const char *name, const char *value)
 		ctx.cfg.root_readme = xstrdup(value);
 	else if (!strcmp(name, "css"))
 		ctx.cfg.css = xstrdup(value);
+	else if (!strcmp(name, "js"))
+		ctx.cfg.js = trim_end(value, '/');
 	else if (!strcmp(name, "favicon"))
 		ctx.cfg.favicon = xstrdup(value);
 	else if (!strcmp(name, "footer"))
@@ -296,6 +298,8 @@ static void querystring_cb(const char *name, const char *value)
 		ctx.qry.showmsg = atoi(value);
 	} else if (!strcmp(name, "period")) {
 		ctx.qry.period = xstrdup(value);
+	} else if (!strcmp(name, "graph_period")) {
+		ctx.qry.graph_period = xstrdup(value);
 	} else if (!strcmp(name, "ss")) {
 		ctx.qry.ssdiff = atoi(value);
 	} else if (!strcmp(name, "all")) {

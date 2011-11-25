@@ -621,6 +621,16 @@ void cgit_print_docstart(struct cgit_context *ctx)
 				       fmt("h=%s", ctx->qry.head)));
 		html("' type='application/atom+xml'/>\n");
 	}
+    if (!strcmp(ctx->qry.page, "stats") && ctx->cfg.max_stats && ctx->cfg.js) {
+        /* XXX: probably there is a better way to do this, but I just want to get this
+           out the door. I'll worry about the details later. */
+        html("<script language='javascript' type='text/javascript' src='");
+        html_attr(ctx->cfg.js);
+        html("/d3.min.js'></script>\n");
+        html("<script language='javascript' type='text/javascript' src='");
+        html_attr(ctx->cfg.js);
+        html("/bar_chart.js'></script>\n");
+    }
 	if (ctx->cfg.head_include)
 		html_include(ctx->cfg.head_include);
 	html("</head>\n");

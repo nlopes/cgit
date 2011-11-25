@@ -11,9 +11,12 @@ docdir = $(prefix)/share/doc/cgit
 htmldir = $(docdir)
 pdfdir = $(docdir)
 mandir = $(prefix)/share/man
+jsdir = $(CGIT_DATA_PATH)/js
 SHA1_HEADER = <openssl/sha.h>
 GIT_VER = 1.7.4
 GIT_URL = http://www.kernel.org/pub/software/scm/git/git-$(GIT_VER).tar.bz2
+D3_VER = mbostock-d3-9a93804
+D3_URL = https://nodeload.github.com/mbostock/d3/tarball/v2.6.0
 INSTALL = install
 MAN5_TXT = $(wildcard *.5.txt)
 MAN_TXT  = $(MAN5_TXT)
@@ -182,6 +185,9 @@ install: all
 	$(INSTALL) -m 0644 cgit.png $(DESTDIR)$(CGIT_DATA_PATH)/cgit.png
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(filterdir)
 	$(INSTALL) -m 0755 filters/* $(DESTDIR)$(filterdir)
+	$(INSTALL) -m 0755 -d $(DESTDIR)$(jsdir)
+	$(INSTALL) -m 0644 js/bar_chart.js $(DESTDIR)$(jsdir)/bar_chart.js
+	$(INSTALL) -m 0644 d3/d3.min.js $(DESTDIR)$(jsdir)/d3.min.js
 
 install-doc: install-man install-html install-pdf
 
@@ -201,6 +207,8 @@ uninstall:
 	rm -f $(DESTDIR)$(CGIT_SCRIPT_PATH)/$(CGIT_SCRIPT_NAME)
 	rm -f $(DESTDIR)$(CGIT_DATA_PATH)/cgit.css
 	rm -f $(DESTDIR)$(CGIT_DATA_PATH)/cgit.png
+	rm -rf $(DESTDIR)$(filterdir)
+	rm -rf $(DESTDIR)$(jsdir)
 
 uninstall-doc: uninstall-man uninstall-html uninstall-pdf
 
@@ -242,3 +250,6 @@ clean-doc:
 
 get-git:
 	curl $(GIT_URL) | tar -xjf - && rm -rf git && mv git-$(GIT_VER) git
+
+get-d3:
+	curl $(D3_URL) | tar -xzf - && rm -rf d3 && mv $(D3_VER) d3

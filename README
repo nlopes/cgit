@@ -12,17 +12,17 @@ Building cgit involves building a proper version of git. How to do this
 depends on how you obtained the cgit sources:
 
 a) If you're working in a cloned cgit repository, you first need to
-initialize and update the git submodule:
+initialize and update the submodules:
 
-  $ git submodule init     # register the git submodule in .git/config
-  $ $EDITOR .git/config    # if you want to specify a different url for git
+  $ git submodule init     # register the git/d3 submodule in .git/config
+  $ $EDITOR .git/config    # if you want to specify a different url for git/d3
   $ git submodule update   # clone/fetch and checkout correct git version
 
-b) If you're building from a cgit tarball, you can download a proper git
+b) If you're building from a cgit tarball, you can download a proper git/d3
 version like this:
 
   $ make get-git
-
+  $ make get-d3
 
 When either a) or b) has been performed, you can build and install cgit like
 this:

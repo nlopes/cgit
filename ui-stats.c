@@ -23,21 +23,21 @@ static void trunc_week(struct tm *tm)
 {
 	time_t t = timegm(tm);
 	t -= ((tm->tm_wday + 6) % 7) * DAY_SECS;
-	gmtime_r(&t, tm);	
+	gmtime_r(&t, tm);
 }
 
 static void dec_week(struct tm *tm)
 {
 	time_t t = timegm(tm);
 	t -= WEEK_SECS;
-	gmtime_r(&t, tm);	
+	gmtime_r(&t, tm);
 }
 
 static void inc_week(struct tm *tm)
 {
 	time_t t = timegm(tm);
 	t += WEEK_SECS;
-	gmtime_r(&t, tm);	
+	gmtime_r(&t, tm);
 }
 
 static char *pretty_week(struct tm *tm)
@@ -135,7 +135,7 @@ struct cgit_period periods[] = {
 };
 
 /* Given a period code or name, return a period index (1, 2, 3 or 4)
- * and update the period pointer to the correcsponding struct.
+ * and update the period pointer to the corresponding struct.
  * If no matching code is found, return 0.
  */
 int cgit_find_stats_period(const char *expr, struct cgit_period **period)
@@ -167,7 +167,7 @@ const char *cgit_find_stats_periodname(int idx)
 }
 
 static void add_commit(struct string_list *authors, struct commit *commit,
-	struct cgit_period *period)
+                       struct cgit_period *period)
 {
 	struct commitinfo *info;
 	struct string_list_item *author, *item;
@@ -212,7 +212,7 @@ static int cmp_total_commits(const void *a1, const void *a2)
  * timeperiod into a nested string_list collection.
  */
 struct string_list collect_stats(struct cgit_context *ctx,
-	struct cgit_period *period)
+                                 struct cgit_period *period)
 {
 	struct string_list authors;
 	struct rev_info rev;
@@ -254,8 +254,8 @@ struct string_list collect_stats(struct cgit_context *ctx,
 }
 
 void print_combined_authorrow(struct string_list *authors, int from, int to,
-	const char *name, const char *leftclass, const char *centerclass,
-	const char *rightclass, struct cgit_period *period)
+                              const char *name, const char *leftclass, const char *centerclass,
+                              const char *rightclass, struct cgit_period *period)
 {
 	struct string_list_item *author;
 	struct authorstat *authorstat;
@@ -274,7 +274,7 @@ void print_combined_authorrow(struct string_list *authors, int from, int to,
 
 	total = 0;
 	htmlf("<tr><td class='%s'>%s</td>", leftclass,
-		fmt(name, to - from + 1));
+          fmt(name, to - from + 1));
 	for (j = 0; j < period->count; j++) {
 		tmp = period->pretty(tm);
 		period->inc(tm);
@@ -294,7 +294,7 @@ void print_combined_authorrow(struct string_list *authors, int from, int to,
 }
 
 void print_authors(struct string_list *authors, int top,
-		   struct cgit_period *period)
+                   struct cgit_period *period)
 {
 	struct string_list_item *author;
 	struct authorstat *authorstat;
@@ -348,11 +348,110 @@ void print_authors(struct string_list *authors, int top,
 
 	if (top < authors->nr)
 		print_combined_authorrow(authors, top, authors->nr - 1,
-			"Others (%ld)", "left", "", "sum", period);
+                                 "Others (%ld)", "left", "", "sum", period);
 
 	print_combined_authorrow(authors, 0, authors->nr - 1, "Total",
-		"total", "sum", "sum", period);
+                             "total", "sum", "sum", period);
 	html("</table>");
+}
+
+void print_authors_graph(struct string_list *authors, int top,
+                         struct cgit_period *period,
+                         const char *graph_period)
+{
+	struct string_list_item *author;
+	struct authorstat *authorstat;
+	struct string_list *items;
+	struct string_list_item *date;
+	time_t now;
+	long i, j;
+    char *tmp;
+    int idx;
+    size_t max = 0;
+	struct tm *tm;
+
+	time(&now);
+	tm = gmtime(&now);
+	period->trunc(tm);
+    period->inc(tm);
+
+	if (top <= 0 || top > authors->nr)
+		top = authors->nr;
+
+    htmlf("<br/><div id='bar_all'></div><br/>"
+          "<h1>Top Contributors during %s</h1>"
+          "<div id='bar_period'></div>", graph_period);
+
+    html("<script type='text/javascript'>");
+    htmlf("var n_periods = %d, n_authors = %d;", period->count, top);
+    html("var authors = [");
+	for (i = 0; i < top; i++) {
+		author = &authors->items[i];
+        htmlf("'%s'", author->string);
+        if (i != top-1)
+            html(",");
+	}
+    html("], ");
+    html("periods = [");
+    for (j = 0; j < period->count; j++)
+        period->dec(tm);
+    for (j = 0; j<period->count; j++) {
+        tmp = period->pretty(tm);
+        period->inc(tm);
+        if (!strcmp(tmp, graph_period))
+            idx = j;
+        htmlf("'%s'", tmp);
+        if (j != period->count-1)
+            html(",");
+    }
+    htmlf("], period_idx = %d\n", idx);
+
+    html("data = [");
+    for (i = 0; i < top; i++) {
+        author = &authors->items[i];
+        authorstat = author->util;
+        items = &authorstat->list;
+        for (j = 0; j < period->count; j++)
+            period->dec(tm);
+        html("[");
+        for (j = 0; j < period->count; j++) {
+            tmp = period->pretty(tm);
+            period->inc(tm);
+			date = string_list_lookup(items, tmp);
+			if (!date)
+				html("0");
+			else {
+				htmlf(SZ_FMT, (size_t)date->util);
+                if ((size_t)date->util > max)
+                    max = (size_t)date->util;
+            }
+            if (j != period->count-1)
+                html(",");
+        }
+        html("]");
+        if (i != top-1)
+            html(",");
+    }
+    htmlf("], max = %ld; ", max);
+    html("render_group_bar_chart(data, max, n_periods, periods, n_authors, authors);"
+         "render_bar_chart(data, max, authors);</script>");
+}
+
+char *cgit_validate_graph_period(char *qry_graph_period, struct cgit_period *period)
+{
+    /* XXX: Why did I do this in such a way? Because I was in a hurry and this is a hack.
+       If you read this, then you should lose some time and fix the whole process. */
+    if ((qry_graph_period[0] == 'W') && (period->code == 'w'))
+        return qry_graph_period;
+    else if (qry_graph_period[0] == 'Q' && period->code == 'q')
+        return qry_graph_period;
+    else if (qry_graph_period[0] >= '1' && qry_graph_period[0] <= '9' &&
+             period->code == 'y')
+        return qry_graph_period;
+    else if (qry_graph_period[0] >= 'A' && qry_graph_period[0] <= 'S' &&
+             period->code == 'm')
+        return qry_graph_period;
+    return NULL;
 }
 
 /* Create a sorted string_list with one entry per author. The util-field
@@ -365,6 +464,10 @@ void cgit_show_stats(struct cgit_context *ctx)
 	struct cgit_period *period;
 	int top, i;
 	const char *code = "w";
+	time_t now;
+	struct tm *tm;
+    char *tmp;
+    const char *graph_period = NULL;
 
 	if (ctx->qry.period)
 		code = ctx->qry.period;
@@ -374,14 +477,18 @@ void cgit_show_stats(struct cgit_context *ctx)
 		cgit_print_error(fmt("Unknown statistics type: %c", code[0]));
 		return;
 	}
+
+    if (ctx->cfg.js && ctx->qry.graph_period)
+        graph_period = cgit_validate_graph_period(ctx->qry.graph_period, period);
+
 	if (i > ctx->repo->max_stats) {
 		cgit_print_error(fmt("Statistics type disabled: %s",
-				     period->name));
+                             period->name));
 		return;
 	}
 	authors = collect_stats(ctx, period);
 	qsort(authors.items, authors.nr, sizeof(struct string_list_item),
-		cmp_total_commits);
+          cmp_total_commits);
 
 	top = ctx->qry.ofs;
 	if (!top)
@@ -397,7 +504,7 @@ void cgit_show_stats(struct cgit_context *ctx)
 		html("<td class='ctrl'><select name='period' onchange='this.form.submit();'>");
 		for (i = 0; i < ctx->repo->max_stats; i++)
 			html_option(fmt("%c", periods[i].code),
-				    periods[i].name, fmt("%c", period->code));
+                        periods[i].name, fmt("%c", period->code));
 		html("</select></td></tr>");
 	}
 	html("<tr><td class='label'>Authors:</td>");
@@ -408,6 +515,26 @@ void cgit_show_stats(struct cgit_context *ctx)
 	html_intoption(100, "100", top);
 	html_intoption(-1, "all", top);
 	html("</select></td></tr>");
+    if (ctx->cfg.js) {
+        html("<tr><td class='label'>Chart:</td>");
+        html("<td class='ctrl'><select name='graph_period' onchange='this.form.submit();'>");
+        time(&now);
+        tm = gmtime(&now);
+        period->trunc(tm);
+
+        for (i = 0; i < period->count; i++) {
+            tmp = period->pretty(tm);
+            if (graph_period == NULL)
+                {
+                    graph_period = strndup(tmp, strlen(tmp));
+                    htmlf("<h1>%s</h1>", graph_period);
+                }
+            html_option(tmp, tmp, graph_period);
+            period->dec(tm);
+        }
+        htmlf("<h1>%s</h1>", graph_period);
+        html("</select></td></tr>");
+    }
 	html("<tr><td/><td class='ctrl'>");
 	html("<noscript><input type='submit' value='Reload'/></noscript>");
 	html("</td></tr></table>");
@@ -421,5 +548,7 @@ void cgit_show_stats(struct cgit_context *ctx)
 	}
 	html("</h2>");
 	print_authors(&authors, top, period);
-}
 
+    if (ctx->cfg.js)
+        print_authors_graph(&authors, top, period, graph_period);
+}
