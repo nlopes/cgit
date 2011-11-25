@@ -141,7 +141,7 @@ function render_bar_chart(data, authors) {
     chart.selectAll("text.bar")
         .data(data_period)
         .enter().append("svg:text")
-        .attr("class", "bar")
+        .attr("class", "bartext")
         .attr("x", x)
         .attr("y", function(d) { return y(d) + y.rangeBand() / 2; })
         .attr("dx", -3)
