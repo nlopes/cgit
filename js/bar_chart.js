@@ -22,13 +22,17 @@ function render_group_bar_chart(data, max, n_periods, periods, n_authors, author
         .attr("fill", function(d, i) { return z(i); })
         .attr("transform", function(d, i) { return "translate(" + y1(i) + ",0)"; });
 
-    g.selectAll("rect")
+    var rect = g.selectAll("rect")
         .data(Object)
         .enter().append("svg:rect")
         .attr("transform", function(d, i) { return "translate(" + y0(i) + ",0)"; })
         .attr("width", y1.rangeBand())
         .attr("height", x)
         .attr("y", function(d) { return h - x(d); });
+
+    g.attr("class", "commit_rect")
+        .append("svg:title")
+        .text(function(d, i) { return authors[i]; });
 
     /* add the labels for the periods */
     vis.selectAll("text.yaxis")
@@ -112,7 +116,7 @@ function render_bar_chart(data, max, authors) {
         .attr("text-anchor", "middle")
         .text(String);
 
-    chart.selectAll("rect")
+    var rect = chart.selectAll("rect")
         .data(data_period)
         .enter().append("svg:rect")
         .attr("y", y)
@@ -131,17 +135,10 @@ function render_bar_chart(data, max, authors) {
         .attr("text-anchor", "end")
         .text(String);
 
-    // chart.selectAll("author")
-    //     .data(data_period)
-    //     .enter().append("svg:text")
-    //     .attr("class", "author_name")
-    //     .attr("x", x)
-    //     .attr("y", function(d, i) { return y(d) + y.rangeBand()/2; })
-    //     .attr("dx", 0)
-    //     .attr("dy", ".71em")
-    //     .attr("text-anchor", "right")
-    //     .attr("fill", function(d, i) { return z(i) })
-    //     .text(function(d, i) { return authors[i]; });
+
+    rect.attr("class", "commit_rect")
+        .append("svg:title")
+        .text(function(d, i) { return authors[i]; });
 
     chart.append("svg:line")
         .attr("y1", 0)
