@@ -56,11 +56,12 @@ function render_group_bar_chart(data, max, n_periods, periods, n_authors, author
     vis.selectAll("legend.name")
         .data(data)
         .enter().append("svg:text")
-        .attr("class", "group")
+        .attr("class", "authortext")
         .attr("x", w+12)
         .attr("y", function(d, i) { return y0.rangeBand()/2+i*12 })
         .attr("dy", ".71em")
-        .text(function(d, i) { return authors[i]; });
+        .text(function(d, i) { return authors[i]; })
+	.attr("fill", "#333");
 
     /* left line */
     vis.append("svg:line")
