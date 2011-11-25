@@ -42,6 +42,7 @@ function render_group_bar_chart(data, max, n_periods, periods, n_authors, author
         .attr("text-anchor", "middle")
         .text(function(d, i) { return periods[i]; });
 
+    /* color square for the author */
     vis.selectAll("legend.rect")
         .data(data)
         .enter().append("svg:rect")
@@ -51,6 +52,7 @@ function render_group_bar_chart(data, max, n_periods, periods, n_authors, author
         .attr("height", 10)
         .attr("fill", function(d, i) { return z(i); });
 
+    /* author name by the color square */
     vis.selectAll("legend.name")
         .data(data)
         .enter().append("svg:text")
@@ -58,9 +60,9 @@ function render_group_bar_chart(data, max, n_periods, periods, n_authors, author
         .attr("x", w+12)
         .attr("y", function(d, i) { return y0.rangeBand()/2+i*12 })
         .attr("dy", ".71em")
-        .attr("text-anchor", "left")
         .text(function(d, i) { return authors[i]; });
 
+    /* left line */
     vis.append("svg:line")
         .attr("x1", 0)
         .attr("x2", 0)
