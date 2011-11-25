@@ -85,6 +85,21 @@ function render_bar_chart(data, authors) {
     data_period = tmp[0], max = tmp[1],
     z = d3.scale.category10();
 
+    if (max == 0) {
+        d3.select("#bar_period")
+            .append("svg:svg")
+            .attr("class", "info")
+            .append("svg:g")
+            .append("svg:text")
+            .text("No commits were found for this timeframe.")
+            .attr("x", 10)
+            .attr("y", 10)
+            .attr("dy", ".35em")
+            .attr("font-weight", "bold")
+            .attr("fill", "#F00");
+        return;
+    }
+
     var x = d3.scale.linear().domain([0, max]).range([0, w/2]);
     var y = d3.scale.ordinal().domain(data_period).rangeBands([0, h/2]);
 
