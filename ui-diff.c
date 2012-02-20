@@ -341,9 +341,7 @@ void cgit_print_diff_ctrls()
 	html("<td class='label'>mode:</td>");
 	html("<td class='ctrl'>");
 	html("<select name='ss' onchange='this.form.submit();'>");
-	curr = ctx.qry.ssdiff;
-	if (!curr && ctx.cfg.ssdiff)
-		curr = 1;
+	curr = ctx.qry.has_ssdiff ? ctx.qry.ssdiff : ctx.cfg.ssdiff;
 	html_intoption(0, "unified", curr);
 	html_intoption(1, "ssdiff", curr);
 	html("</select></td></tr>");
@@ -395,8 +393,7 @@ void cgit_print_diff(const char *new_rev, const char *old_rev,
 		}
 	}
 
-	if ((ctx.qry.ssdiff && !ctx.cfg.ssdiff) || (!ctx.qry.ssdiff && ctx.cfg.ssdiff))
-		use_ssdiff = 1;
+	use_ssdiff = ctx.qry.has_ssdiff ? ctx.qry.ssdiff : ctx.cfg.ssdiff;
 
 	if (show_ctrls)
 		cgit_print_diff_ctrls();
