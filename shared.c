@@ -8,7 +8,6 @@
 
 #include "cgit.h"
 #include <stdio.h>
-#include <linux/limits.h>
 
 struct cgit_repolist cgit_repolist;
 struct cgit_context ctx;
@@ -393,7 +392,7 @@ void cgit_prepare_repo_env(struct cgit_repo * repo)
 	p = env_vars;
 	q = p + env_var_count;
 	for (; p < q; p++)
-		if (setenv(p->name, p->value, 1))
+		if (p->value && setenv(p->name, p->value, 1))
 			fprintf(stderr, warn, p->name, p->value);
 }
 

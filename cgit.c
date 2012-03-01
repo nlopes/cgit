@@ -302,6 +302,7 @@ static void querystring_cb(const char *name, const char *value)
 		ctx.qry.graph_period = xstrdup(value);
 	} else if (!strcmp(name, "ss")) {
 		ctx.qry.ssdiff = atoi(value);
+		ctx.qry.has_ssdiff = 1;
 	} else if (!strcmp(name, "all")) {
 		ctx.qry.show_all = atoi(value);
 	} else if (!strcmp(name, "context")) {
