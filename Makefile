@@ -187,7 +187,7 @@ install: all
 	$(INSTALL) -m 0755 filters/* $(DESTDIR)$(filterdir)
 	$(INSTALL) -m 0755 -d $(DESTDIR)$(jsdir)
 	$(INSTALL) -m 0644 js/bar_chart.js $(DESTDIR)$(jsdir)/bar_chart.js
-	$(INSTALL) -m 0644 d3/d3.min.js $(DESTDIR)$(jsdir)/d3.min.js
+	$(INSTALL) -m 0644 d3/d3.v2.min.js $(DESTDIR)$(jsdir)/d3.min.js
 
 install-doc: install-man install-html install-pdf
 
